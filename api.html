@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<p id="icon">Loading...</p>
+<p id="name">Name: ????</p>
+<p id="hp">HP: ????</p>
+<p id="mp">MP: ????</p>
+
+<script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
+<script type="text/javascript">
+    function displayPokemonInfo(data){
+        // Extract the sprite URL from the API response
+        var spriteUrl = data.sprites.front_default;
+        var name = data.name; // Pokemon的名字
+        var hp = data.stats[0].base_stat; // Pokemon的基礎HP
+        var mp = data.stats[1].base_stat; // Pokemon的基礎MP
+
+        // 將數據顯示在HTML中
+        $("#icon").html("<img src='"+spriteUrl+"' />");
+        $("#name").text("Name: " + name);
+        $("#hp").text("HP: " + hp);
+        $("#mp").text("MP: " + mp);
+    };
+
+    $(function(){
+        // 定義一個函數來獲取隨機的Pokemon
+        function getRandomPokemon() {
+            var randomId = Math.floor(Math.random() * 898) + 1; // 生成一個隨機的Pokemon ID（從1到898）
+            var url="https://pokeapi.co/api/v2/pokemon/" + randomId;
+            $.ajax({
+                url: url,
+                dataType: "json",
+                type: "get",
+                success:function (data, textStatus, jqXHR) {
+                    displayPokemonInfo(data);
+                } ,
+                error: function(jqXHR, textStatus, errorThrown) {
+                    console.log("Error: " + errorThrown);
+                }
+            });
+        }
+
+        // 當頁面加載時調用 getRandomPokemon 函數
+        getRandomPokemon();
+
+        // 當頁面刷新時重新加載一個隨機的Pokemon
+        $(window).on('beforeunload', function() {
+            getRandomPokemon();
+        });
+    });
+
+</script>
+</body>
+</html>
